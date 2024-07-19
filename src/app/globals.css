@@ -1,0 +1,83 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  background-color: white;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+/* table css */
+.table-container {
+  overflow-x: auto; /* Enable horizontal scrolling if table overflows */
+  padding: 20px; /* Add padding around the table */
+}
+
+.student-table {
+  width: 100%; /* Full width table */
+  border-collapse: collapse; /* Collapse table borders */
+}
+
+.student-table th,
+.student-table td {
+  border: 1px solid #dddddd; /* Border for each cell */
+  padding: 12px; /* Padding inside each cell */
+  text-align: left; /* Align text to the left within cells */
+}
+
+.student-table th {
+  background-color: #f2f2f2; /* Background color for header cells */
+  font-weight: bold; /* Make header text bold */
+  width: 100px;
+}
+
+.student-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternate row background color */
+}
+
+.student-table tr:hover {
+  background-color: #e6f7ff; /* Hover color for rows */
+}
+
+.delete-button {
+  background-color: #f44336; /* Red background */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 8px 16px; /* Padding around text */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+
+
+.delete-button {
+  padding: 6px 12px; /* Padding for the delete button */
+  background-color: #d61919; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* Remove button border */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+.delete-button:hover {
+  background-color: #ff6666; /* Hover background color */
+}
