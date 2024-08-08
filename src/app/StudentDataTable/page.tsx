@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { CANDIDATE_INFO } from '@/utils/gql/GQL_QUERIES';
@@ -47,9 +47,7 @@ const StudentDataTable: React.FC = () => {
     const viewResume = (contact: string) => {
         const resumeRef = ref(storage, `images/${contact}`);
         getDownloadURL(resumeRef)
- 
             .then((url) => {
-                       console.log(contact)
                 window.open(url, "_blank");
             })
             .catch((error) => {
@@ -181,9 +179,9 @@ const StudentDataTable: React.FC = () => {
                 </div>
             </div>
             {/* Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[calc(100vh-200px)]">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job-ID</th>
@@ -203,7 +201,6 @@ const StudentDataTable: React.FC = () => {
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 4</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 5</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Linkedin/Portfolio</th>
-                            
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">View Resume</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submission Date</th>
                         </tr>
@@ -246,7 +243,6 @@ const StudentDataTable: React.FC = () => {
                                             View here
                                         </a>
                                     )}</td>
-                                  
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <button
                                             onClick={() => viewResume(candidate.contact)}
