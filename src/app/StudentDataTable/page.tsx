@@ -217,8 +217,8 @@ const StudentDataTable: React.FC = () => {
                                             Delete
                                         </button>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.job_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.name}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-900">{candidate.job_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm sticky left-0 bg-[#64748b] text-white">{candidate.name}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.contact}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.city}</td>
