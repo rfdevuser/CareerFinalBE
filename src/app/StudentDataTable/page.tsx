@@ -189,6 +189,8 @@ const StudentDataTable: React.FC = () => {
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">View Resume</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submission Date</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qualification</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
@@ -201,8 +203,7 @@ const StudentDataTable: React.FC = () => {
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 4</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 5</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Linkedin/Portfolio</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">View Resume</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submission Date</th>
+                           
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -222,6 +223,15 @@ const StudentDataTable: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.contact}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.city}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <button
+                                            onClick={() => viewResume(candidate.contact)}
+                                            className="text-blue-500 hover:text-blue-700"
+                                        >
+                                            View Resume
+                                        </button>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.submission_date}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.qualification}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.gender}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.student ? 'Yes' : 'No'}</td>
@@ -243,15 +253,7 @@ const StudentDataTable: React.FC = () => {
                                             View here
                                         </a>
                                     )}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <button
-                                            onClick={() => viewResume(candidate.contact)}
-                                            className="text-blue-500 hover:text-blue-700"
-                                        >
-                                            View Resume
-                                        </button>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.submission_date}</td>
+                                  
                                 </tr>
                             ))
                         ) : (

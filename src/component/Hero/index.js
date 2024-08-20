@@ -27,7 +27,7 @@ const Index = () => {
           Update and Delete Ticker here
         </div></Link>
         <Link href='./StudentDataTable'>   <div className='border-2 border-gray-300 bg-[#831843] text-white rounded-lg p-4 h-48 w-48 flex items-center justify-center'>
-          See Student Response here
+          See Candidates Response here
         </div></Link>
       </div>
     </section>
