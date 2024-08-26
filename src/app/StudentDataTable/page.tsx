@@ -7,7 +7,7 @@ import { BallTriangle } from 'react-loader-spinner';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
 import Link from 'next/link';
-
+import {sendEmail} from '@/email/email'
 // Define the Candidate interface
 interface Candidate {
     id: string;
@@ -70,6 +70,39 @@ const StudentDataTable: React.FC = () => {
             console.error('Error deleting candidate:', error);
         }
     };
+    const handleReject = async (candidate: Candidate) => {
+        const confirmed = window.confirm(`Are you sure you want to send a rejection email to ${candidate.name}?`);
+        if (!confirmed) return;
+    try{
+        const emailData = {
+            to_email: candidate.email,
+            to_name: candidate.name,
+            to_jobid:candidate.job_id,
+            from_name: 'RAKHIS FASHIONS',
+            reply_to: 'no-reply@rakhisfashions.com',
+            subject: 'Application Status Update',
+            message: 'We wish you the best of luck in your job search and future career endeavors.',
+        };
+    
+       
+            await sendEmail(emailData);
+            try {
+                await updateCandidateStatus({
+                    variables: { id: candidate.id, status: "hold" }
+                });
+    
+                refetch(); // Ensure that refetch is indeed working as expected
+            } catch (error) {
+                console.error('Error updating candidate status:', error);
+            } finally {
+                setLoadingCandidateId(null); // Reset loading state
+            }
+    }catch{
+
+    }
+       
+          
+        };
 
     const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'unselected' | 'hold') => {
         setLoadingCandidateId(candidateId); // Set loading state to true
@@ -213,6 +246,7 @@ const StudentDataTable: React.FC = () => {
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job-ID</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -246,6 +280,15 @@ const StudentDataTable: React.FC = () => {
                                             className="text-red-600 hover:text-red-900"
                                         >
                                             Delete
+                                        </button>
+                                        
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button
+                                             onClick={() => handleReject(candidate)}
+                                            className="text-red-600 hover:text-red-900"
+                                        >
+                                            Reject
                                         </button>
                                         
                                     </td>

@@ -12,6 +12,7 @@
     "@apollo/client": "^3.10.8",
     "datejs": "^1.0.0-rc3",
     "email": "^0.2.6",
+    "emailjs-com": "^3.2.0",
     "firebase": "^10.12.4",
     "graphql": "^16.9.0",
     "js": "^0.1.0",
