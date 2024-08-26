@@ -29,7 +29,7 @@ query MyQuery {
 `;
 
 
-export const MY_TICKER = gql `
+export const MY_TICKER = gql`
 query MyQuery {
   tickerInfo
 }
@@ -90,6 +90,19 @@ export const GET_INTERVIEWER_CANDIDATE_INFO = gql`
       interviewerName
       interviewerStatus
       submissionTimestamp
+    }
+  }
+`;
+
+
+
+export const GET_CANDIDATES_BY_STATUS = gql`
+  query GetCandidatesByStatus($status: String!) {
+    getCandidatesByStatus(status: $status) {
+    created_at
+    candidateID
+    expectedCom
+    proposedCom
     }
   }
 `;
