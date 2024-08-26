@@ -2,12 +2,13 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { CANDIDATE_INFO } from '@/utils/gql/GQL_QUERIES';
-import { DELETE_CANDIDATE_RESPONSE } from '@/utils/gql/GQL_MUTATION';
+import { DELETE_CANDIDATE_RESPONSE, UPDATE_CANDIDATE_STATUS } from '@/utils/gql/GQL_MUTATION';
 import { BallTriangle } from 'react-loader-spinner';
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
+import Link from 'next/link';
 
-// Define the Candidate interface here
+// Define the Candidate interface
 interface Candidate {
     id: string;
     job_id: string;
@@ -28,21 +29,24 @@ interface Candidate {
     answer5: string;
     resume: string;
     submission_date: string;
-    // Add any other fields you might have
+    status: 'selected' | 'unselected' | 'hold'; // Added 'hold' status
 }
 
 const StudentDataTable: React.FC = () => {
     const [contactNumber, setContactNumber] = useState<string>("");
     const [resumeUrl, setResumeUrl] = useState<string | null>(null);
-
-    const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
-    const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
+    const [loadingCandidateId, setLoadingCandidateId] = useState<string | null>(null);
 
     // State for filters
     const [jobIdFilter, setJobIdFilter] = useState<string>('');
     const [experienceFilter, setExperienceFilter] = useState<{ min: number; max: number }>({ min: 0, max: 20 });
     const [contactFilter, setContactFilter] = useState<string>('');
     const [cityFilter, setCityFilter] = useState<string>('');
+    const [keyFilter, setKeyFilter] = useState<string>(''); // Added key filter state
+
+    const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
+    const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
+    const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
 
     const viewResume = (contact: string) => {
         const resumeRef = ref(storage, `images/${contact}`);
@@ -56,26 +60,34 @@ const StudentDataTable: React.FC = () => {
             });
     };
 
-    // Handle delete function
     const handleDelete = async (contact: string) => {
         const confirmed = window.confirm(`Are you sure you want to delete the candidate with contact: ${contact}?`);
         if (!confirmed) return;
         try {
-            const { data } = await deleteCandidate({
-                variables: { contact },
-            });
-
-            // Optionally, handle response data here
-
-            // Refetch candidate info after deletion
+            await deleteCandidate({ variables: { contact } });
             refetch();
         } catch (error) {
             console.error('Error deleting candidate:', error);
-            // Handle error as needed
         }
     };
 
-    // Filtered candidates based on jobIdFilter, experience range, contact number, and city
+    const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'unselected' | 'hold') => {
+        setLoadingCandidateId(candidateId); // Set loading state to true
+
+        try {
+            await updateCandidateStatus({
+                variables: { id: candidateId, status: newStatus }
+            });
+
+            refetch(); // Ensure that refetch is indeed working as expected
+        } catch (error) {
+            console.error('Error updating candidate status:', error);
+        } finally {
+            setLoadingCandidateId(null); // Reset loading state
+        }
+    };
+
+    // Filter candidates
     let filteredCandidates: Candidate[] = data ? data.candidatesInfo : [];
 
     if (jobIdFilter) {
@@ -101,6 +113,12 @@ const StudentDataTable: React.FC = () => {
         );
     }
 
+    if (keyFilter) {
+        filteredCandidates = filteredCandidates.filter(candidate =>
+            candidate.id.includes(keyFilter) || candidate.job_id.includes(keyFilter)
+        );
+    }
+
     if (loading) {
         return (
             <div className='flex justify-center'>
@@ -117,6 +135,7 @@ const StudentDataTable: React.FC = () => {
             </div>
         );
     }
+
     if (error) return <p className="text-center mt-4">Error: {error.message}</p>;
 
     return (
@@ -154,6 +173,16 @@ const StudentDataTable: React.FC = () => {
                             className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
                         />
                     </div>
+                    <div>
+                        <label htmlFor="keyFilter" className="block text-sm font-medium text-gray-700">Filter by Key:</label>
+                        <input
+                            type="text"
+                            id="keyFilter"
+                            value={keyFilter}
+                            onChange={(e) => setKeyFilter(e.target.value)}
+                            className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+                        />
+                    </div>
                 </div>
                 <div className="flex items-center space-x-4">
                     <div>
@@ -184,7 +213,9 @@ const StudentDataTable: React.FC = () => {
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job-ID</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
@@ -203,7 +234,6 @@ const StudentDataTable: React.FC = () => {
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 4</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answer 5</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Linkedin/Portfolio</th>
-                           
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -217,9 +247,37 @@ const StudentDataTable: React.FC = () => {
                                         >
                                             Delete
                                         </button>
+                                        
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-900">{candidate.job_id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm sticky left-0 bg-[#64748b] text-white">{candidate.name}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.job_id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <select
+                                            onChange={(e) => handleStatusChange(candidate.id, e.target.value as 'selected' | 'unselected' | 'hold')}
+                                            value={loadingCandidateId === candidate.id ? 'loading' : candidate.status}
+                                            disabled={loadingCandidateId === candidate.id}
+                                            className={`px-2 py-1 rounded text-white ${loadingCandidateId === candidate.id ? 'bg-gray-400' : candidate.status === 'selected' ? 'bg-green-500' : candidate.status === 'hold' ? 'bg-yellow-500' : 'bg-gray-500'}`}
+                                        >
+                                            <option value="selected">Selected</option>
+                                            <option value="unselected">Unselected</option>
+                                            <option value="hold">Hold</option> {/* Added "Hold" option */}
+                                        </select>
+                                        {loadingCandidateId === candidate.id && (
+                                            <BallTriangle
+                                                height={20}
+                                                width={20}
+                                                radius={5}
+                                                color="#fff"
+                                                ariaLabel="ball-triangle-loading"
+                                                wrapperStyle={{ marginLeft: '10px' }}
+                                                wrapperClass=""
+                                                visible={true}
+                                            />
+                                        )}
+                                    </td>
+                                    <Link href={`/SingleCandidatePage?id=${candidate.id}`} as={`/SingleCandidatePage/${candidate.id}`}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm sticky left-0 bg-[#64748b] text-white">{candidate.name}</td>
+                                    </Link>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.contact}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.city}</td>
@@ -253,7 +311,6 @@ const StudentDataTable: React.FC = () => {
                                             View here
                                         </a>
                                     )}</td>
-                                  
                                 </tr>
                             ))
                         ) : (

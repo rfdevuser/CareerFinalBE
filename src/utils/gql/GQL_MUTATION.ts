@@ -89,3 +89,85 @@ $contact: String!
   }
 }
   `;
+
+  export const UPDATE_CANDIDATE_STATUS  =gql`
+  mutation UpdateCandidateStatus(
+    $id: String!,
+    $status: String!
+  ) {
+    updateCandidateStatus(
+      input: {
+        id: $id,
+        status: $status,
+        clientMutationId: "test"
+      }
+    ) {
+      clientMutationId
+      message
+    }
+  }
+  `;
+
+
+
+
+  export const ADD_CANDIDATE_INTERNAL_INFO = gql`
+  mutation UpdateAddCandidateInternalInfo(
+    $candidateID: String!,
+    $candidateStatus: String!,
+    $noticePeriod: String!,
+    $availableToJoin: String!,
+    $presentCom: String!,
+    $expectedCom: String!,
+    $proposedCom: String!
+  ) {
+    addCandidateInternalInfo(input: {
+      candidateID:     $candidateID,
+      candidateStatus:  $candidateStatus,
+      noticePeriod: $noticePeriod,
+      availableToJoin: $availableToJoin,
+      presentCom: $presentCom,
+      expectedCom: $expectedCom,
+      proposedCom: $proposedCom,
+     
+    }) {
+     testoutput
+ 
+    }
+  }
+`;
+export const ADD_CANDIDATE_HR_INFO = gql`
+  mutation AddCandidateHRInfo(
+    $candidateID: String!,
+    $hrComment: String!,
+    $hrStatus: String!
+  ) {
+    addCandidateHRInfo(input: {
+      candidateID: $candidateID,
+      hrComment: $hrComment,
+      hrStatus: $hrStatus
+    }) {
+      responseMessage
+    }
+  }
+`;
+
+
+
+export const ADD_INTERVIEWER_CANDIDATE_INFO = gql`
+  mutation AddInterviewerCandidateInfo(
+    $candidateID: String!,
+    $interviewerName: String!,
+    $interviewerComment: String!,
+    $interviewerStatus: String!
+  ) {
+    addInterviewerCandidateInfo(input: {
+      candidateID: $candidateID,
+      interviewerName: $interviewerName,
+      interviewerComment: $interviewerComment,
+      interviewerStatus: $interviewerStatus
+    }) {
+     testoutput
+    }
+  }
+`;
