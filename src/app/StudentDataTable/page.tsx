@@ -261,7 +261,7 @@ const StudentDataTable: React.FC = () => {
                 </div>
             </div>
             {/* Table */}
-            <div  className="overflow-x-auto max-h-[calc(100vh-200px)]">
+            <div  className="">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
