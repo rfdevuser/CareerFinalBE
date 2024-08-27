@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { CANDIDATE_INFO } from '@/utils/gql/GQL_QUERIES';
 import { DELETE_CANDIDATE_RESPONSE, UPDATE_CANDIDATE_STATUS } from '@/utils/gql/GQL_MUTATION';
@@ -8,6 +8,7 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
 import Link from 'next/link';
 import {sendEmail} from '@/email/email'
+import { useRouter } from 'next/navigation';
 // Define the Candidate interface
 interface Candidate {
     id: string;
@@ -33,10 +34,11 @@ interface Candidate {
 }
 
 const StudentDataTable: React.FC = () => {
+    const router = useRouter();
     const [contactNumber, setContactNumber] = useState<string>("");
     const [resumeUrl, setResumeUrl] = useState<string | null>(null);
     const [loadingCandidateId, setLoadingCandidateId] = useState<string | null>(null);
-
+    const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
     // State for filters
     const [jobIdFilter, setJobIdFilter] = useState<string>('');
     const [experienceFilter, setExperienceFilter] = useState<{ min: number; max: number }>({ min: 0, max: 20 });
@@ -47,6 +49,22 @@ const StudentDataTable: React.FC = () => {
     const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
     const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
     const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
+    const tableContainerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const storedCandidateId = localStorage.getItem('selectedCandidateId');
+        if (storedCandidateId) {
+            setSelectedCandidateId(storedCandidateId);
+        }
+    }, []);
+    useEffect(() => {
+        if (selectedCandidateId) {
+            localStorage.setItem('selectedCandidateId', selectedCandidateId);
+        }
+    }, [selectedCandidateId]);
+  
+ 
+   
+    
 
     const viewResume = (contact: string) => {
         const resumeRef = ref(storage, `images/${contact}`);
@@ -170,7 +188,9 @@ const StudentDataTable: React.FC = () => {
     }
 
     if (error) return <p className="text-center mt-4">Error: {error.message}</p>;
-
+    const handleOnClick = (candidateId: string) => {
+        setSelectedCandidateId(candidateId);
+    };
     return (
         <div className="container mx-auto mt-4 bg-white h-screen">
             {/* Filter controls */}
@@ -241,7 +261,7 @@ const StudentDataTable: React.FC = () => {
                 </div>
             </div>
             {/* Table */}
-            <div className="overflow-x-auto max-h-[calc(100vh-200px)]">
+            <div  className="overflow-x-auto max-h-[calc(100vh-200px)]">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-100 sticky top-0 z-10">
                         <tr>
@@ -273,7 +293,7 @@ const StudentDataTable: React.FC = () => {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {filteredCandidates.length > 0 ? (
                             filteredCandidates.map((candidate) => (
-                                <tr key={candidate.id}>
+                                <tr key={candidate.id} className={selectedCandidateId === candidate.id ? 'bg-[#fed7aa]' : ''}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleDelete(candidate.contact)}
@@ -318,8 +338,13 @@ const StudentDataTable: React.FC = () => {
                                             />
                                         )}
                                     </td>
-                                    <Link href={`/SingleCandidatePage?id=${candidate.id}`} as={`/SingleCandidatePage/${candidate.id}`}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm sticky left-0 bg-[#64748b] text-white">{candidate.name}</td>
+                                    <Link  href={`/SingleCandidatePage?id=${candidate.id}`} as={`/SingleCandidatePage/${candidate.id}`}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm sticky left-0 bg-[#64748b] text-white"    onClick={() => handleOnClick(candidate.id)} > <button
+                                    className={`text-white-600 ${selectedCandidateId === candidate.id ? 'text-red-500' : ''}`}
+                                
+                                >
+                                    {candidate.name}
+                                </button></td>
                                     </Link>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.contact}</td>
