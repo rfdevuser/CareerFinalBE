@@ -107,3 +107,15 @@ export const GET_CANDIDATES_BY_STATUS = gql`
   }
 `;
 
+export const CANDIDATE_INFO_NAME = gql`
+query MyQuery {
+  candidatesInfo {
+   
+   
+ id
+    name
+   contact
+    
+  }
+}
+`;

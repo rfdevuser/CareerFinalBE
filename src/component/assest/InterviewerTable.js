@@ -74,9 +74,13 @@ const InterviewTable = ({ candidateID }) => {
                   <div className={`inline-flex text-xs leading-5 font-semibold rounded-full p-2 ${
                     item.interviewerStatus === 'passed' ? 'bg-green-100 text-green-800' :
                     item.interviewerStatus === 'failed' ? 'bg-red-100 text-red-800' :
+                    item.interviewerStatus === 'f2f' ? 'bg-yellow-100 text-yellow-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
-                    {item.interviewerStatus === 'passed' ? 'Selected' : 'UnSelected'}
+                    {item.interviewerStatus === 'passed' ? 'Selected' :
+                     item.interviewerStatus === 'failed' ? 'UnSelected' :
+                     item.interviewerStatus === 'f2f' ? 'Face to Face' :
+                     'Unknown'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap max-w-xs overflow-x-auto">
@@ -128,12 +132,15 @@ const InterviewTable = ({ candidateID }) => {
                       value={row.status}
                       onChange={(e) => handleChange(index, e)}
                       className={`block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2 ${
-                        row.status === 'failed' ? 'bg-red-100 text-red-800' : row.status === 'passed' ? 'bg-green-100 text-green-800' : ''
+                        row.status === 'failed' ? 'bg-red-100 text-red-800' : 
+                        row.status === 'passed' ? 'bg-green-100 text-green-800' :
+                        row.status === 'f2f' ? 'bg-yellow-100 text-yellow-800' : ''
                       }`}
                     >
                       <option value="">Select Status</option>
                       <option value="passed">Selected</option>
                       <option value="failed">UnSelected</option>
+                      <option value="f2f">Face to Face</option>
                     </select>
                   </td>
                 </tr>
