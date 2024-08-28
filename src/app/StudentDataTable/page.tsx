@@ -45,7 +45,7 @@ const StudentDataTable: React.FC = () => {
     const [contactFilter, setContactFilter] = useState<string>('');
     const [cityFilter, setCityFilter] = useState<string>('');
     const [keyFilter, setKeyFilter] = useState<string>(''); // Added key filter state
-
+    
     const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
     const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
     const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
@@ -169,7 +169,10 @@ const StudentDataTable: React.FC = () => {
             candidate.id.includes(keyFilter) || candidate.job_id.includes(keyFilter)
         );
     }
+   
+    filteredCandidates = [...filteredCandidates].reverse();
 
+  
     if (loading) {
         return (
             <div className='flex justify-center'>
@@ -192,78 +195,84 @@ const StudentDataTable: React.FC = () => {
         setSelectedCandidateId(candidateId);
     };
     return (
-        <div className="container mx-auto mt-4 bg-white h-screen">
-            {/* Filter controls */}
-            <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                    <div>
-                        <label htmlFor="jobIdFilter" className="block text-sm font-medium text-gray-700">Filter by Job ID:</label>
-                        <input
-                            type="text"
-                            id="jobIdFilter"
-                            value={jobIdFilter}
-                            onChange={(e) => setJobIdFilter(e.target.value)}
-                            className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="contactFilter" className="block text-sm font-medium text-gray-700">Search by Contact Number:</label>
-                        <input
-                            type="text"
-                            id="contactFilter"
-                            value={contactFilter}
-                            onChange={(e) => setContactFilter(e.target.value)}
-                            className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="cityFilter" className="block text-sm font-medium text-gray-700">Filter by City:</label>
-                        <input
-                            type="text"
-                            id="cityFilter"
-                            value={cityFilter}
-                            onChange={(e) => setCityFilter(e.target.value)}
-                            className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="keyFilter" className="block text-sm font-medium text-gray-700">Filter by Key:</label>
-                        <input
-                            type="text"
-                            id="keyFilter"
-                            value={keyFilter}
-                            onChange={(e) => setKeyFilter(e.target.value)}
-                            className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <div>
-                        <label htmlFor="experienceRange" className="block text-sm font-medium text-gray-700">Filter by Experience:</label>
-                        <div className="flex items-center space-x-4">
-                            <input
-                                type="number"
-                                placeholder="Min"
-                                value={experienceFilter.min}
-                                onChange={(e) => setExperienceFilter({ ...experienceFilter, min: parseInt(e.target.value) || 0 })}
-                                className='border-2 border-gray-300 rounded-md px-3 py-2 w-20'
-                            />
-                            <span className="text-gray-500">-</span>
-                            <input
-                                type="number"
-                                placeholder="Max"
-                                value={experienceFilter.max}
-                                onChange={(e) => setExperienceFilter({ ...experienceFilter, max: parseInt(e.target.value) || 20 })}
-                                className='border-2 border-gray-300 rounded-md px-3 py-2 w-20'
-                            />
-                        </div>
-                    </div>
-                </div>
+    <> 
+   <div className=' fixed top-0 left-0 right-0 bg-red-200 z-50'>
+     <div className="  mb-4 flex items-center justify-between bg-red-200">
+    <div className="flex items-center space-x-4">
+        <div>
+            <label htmlFor="jobIdFilter" className="block text-sm font-medium text-gray-700">Filter by Job ID:</label>
+            <input
+                type="text"
+                id="jobIdFilter"
+                value={jobIdFilter}
+                onChange={(e) => setJobIdFilter(e.target.value)}
+                className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+            />
+        </div>
+        <div>
+            <label htmlFor="contactFilter" className="block text-sm font-medium text-gray-700">Search by Contact Number:</label>
+            <input
+                type="text"
+                id="contactFilter"
+                value={contactFilter}
+                onChange={(e) => setContactFilter(e.target.value)}
+                className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+            />
+        </div>
+        <div>
+            <label htmlFor="cityFilter" className="block text-sm font-medium text-gray-700">Filter by City:</label>
+            <input
+                type="text"
+                id="cityFilter"
+                value={cityFilter}
+                onChange={(e) => setCityFilter(e.target.value)}
+                className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+            />
+        </div>
+        <div>
+            <label htmlFor="keyFilter" className="block text-sm font-medium text-gray-700">Filter by Key:</label>
+            <input
+                type="text"
+                id="keyFilter"
+                value={keyFilter}
+                onChange={(e) => setKeyFilter(e.target.value)}
+                className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+            />
+        </div>
+    </div>
+    <div className="flex items-center space-x-4">
+        <div>
+            <label htmlFor="experienceRange" className="block text-sm font-medium text-gray-700">Filter by Experience:</label>
+            <div className="flex items-center space-x-4">
+                <input
+                    type="number"
+                    placeholder="Min"
+                    value={experienceFilter.min}
+                    onChange={(e) => setExperienceFilter({ ...experienceFilter, min: parseInt(e.target.value) || 0 })}
+                    className='border-2 border-gray-300 rounded-md px-3 py-2 w-20'
+                />
+                <span className="text-gray-500">-</span>
+                <input
+                    type="number"
+                    placeholder="Max"
+                    value={experienceFilter.max}
+                    onChange={(e) => setExperienceFilter({ ...experienceFilter, max: parseInt(e.target.value) || 20 })}
+                    className='border-2 border-gray-300 rounded-md px-3 py-2 w-20'
+                />
+              
             </div>
+        </div>
+    </div>
+</div>
+</div>
+
+        <div className="container mx-auto  bg-white h-screen mt-10">
+            {/* Filter controls */}
+           
             {/* Table */}
-            <div  className="">
+            <div  className="mt-20  ">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-100 sticky top-0 z-10">
+                    <thead className="bg-gray-100 sticky top-20 z-10">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
@@ -392,6 +401,7 @@ const StudentDataTable: React.FC = () => {
                 </table>
             </div>
         </div>
+        </>
     );
 };
 
