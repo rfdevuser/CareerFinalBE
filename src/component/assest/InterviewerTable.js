@@ -75,11 +75,13 @@ const InterviewTable = ({ candidateID }) => {
                     item.interviewerStatus === 'passed' ? 'bg-green-100 text-green-800' :
                     item.interviewerStatus === 'failed' ? 'bg-red-100 text-red-800' :
                     item.interviewerStatus === 'f2f' ? 'bg-yellow-100 text-yellow-800' :
+                    item.interviewerStatus === 'reconsideration' ? 'bg-purple-100 text-purple-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
                     {item.interviewerStatus === 'passed' ? 'Selected' :
                      item.interviewerStatus === 'failed' ? 'UnSelected' :
                      item.interviewerStatus === 'f2f' ? 'Face to Face' :
+                     item.interviewerStatus === 'reconsideration' ? 'Reconsideration' :
                      'Unknown'}
                   </div>
                 </td>
@@ -134,13 +136,15 @@ const InterviewTable = ({ candidateID }) => {
                       className={`block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm p-2 ${
                         row.status === 'failed' ? 'bg-red-100 text-red-800' : 
                         row.status === 'passed' ? 'bg-green-100 text-green-800' :
-                        row.status === 'f2f' ? 'bg-yellow-100 text-yellow-800' : ''
+                        row.status === 'f2f' ? 'bg-yellow-100 text-yellow-800' :
+                        row.status === 'reconsideration' ? 'bg-purple-100 text-purple-800' : ''
                       }`}
                     >
                       <option value="">Select Status</option>
                       <option value="passed">Selected</option>
                       <option value="failed">UnSelected</option>
                       <option value="f2f">Face to Face</option>
+                      <option value="reconsideration">Reconsideration</option>
                     </select>
                   </td>
                 </tr>

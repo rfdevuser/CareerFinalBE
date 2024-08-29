@@ -46,25 +46,10 @@ console.log(data)
         </Link>
       </div>
 
-      <div className='flex justify-center mt-8'>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className='border rounded-lg p-2 bg-red-200'
-        >
-          <option value='Ongoing Process'>Ongoing Process</option>
-          <option value='Selected'>Selected</option>
-        </select>
-      </div>
+     
 
       <div className='mt-8'>
-        {loading ? (
-          <p>Loading table data...</p>
-        ) : error ? (
-          <p>Error: {error.message}</p>
-        ) : (
-          <StatusTable data={data} />
-        )}
+       <StatusTable/>
       </div>
     </section>
   );

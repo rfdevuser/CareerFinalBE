@@ -75,6 +75,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
     updateaddCandidateInternalInfo({
       variables: {
         candidateID: id,
+        candidateName:candidateData.candidateById.name,
         candidateStatus: activeAccordion,
         noticePeriod: noticePeriod,
         availableToJoin: availableToJoin,
@@ -101,7 +102,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
       </div>
     );
   }
-  
+
   if (candidateError || internalInfoError) {
     return <p>Error: {candidateError?.message || internalInfoError?.message}</p>;
   }

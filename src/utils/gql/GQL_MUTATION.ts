@@ -114,6 +114,7 @@ $contact: String!
   export const ADD_CANDIDATE_INTERNAL_INFO = gql`
   mutation UpdateAddCandidateInternalInfo(
     $candidateID: String!,
+    
     $candidateStatus: String!,
     $noticePeriod: String!,
     $availableToJoin: String!,

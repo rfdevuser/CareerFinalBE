@@ -101,6 +101,7 @@ export const GET_CANDIDATES_BY_STATUS = gql`
     getCandidatesByStatus(status: $status) {
     created_at
     candidateID
+  
     expectedCom
     proposedCom
     }
@@ -118,4 +119,16 @@ query MyQuery {
     
   }
 }
+`;
+
+
+export const GET_CANDIDATE_MULTIPLE_DETAILS = gql`
+  query GetCandidateDetails($status: String!) {
+    getMultipleQueryCandidatesByStatus(status: $status) {
+      candidateID
+      name
+      interviewerStatus
+       created_at
+    }
+  }
 `;
