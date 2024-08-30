@@ -62,7 +62,53 @@ const StudentDataTable: React.FC = () => {
         }
     }, [selectedCandidateId]);
   
- 
+    useEffect(() => {
+        const storedJobIdFilter = localStorage.getItem('jobIdFilter');
+        const storedExperienceFilter = localStorage.getItem('experienceFilter');
+        const storedContactFilter = localStorage.getItem('contactFilter');
+        const storedCityFilter = localStorage.getItem('cityFilter');
+        const storedKeyFilter = localStorage.getItem('keyFilter');
+        
+        if (storedJobIdFilter) setJobIdFilter(storedJobIdFilter);
+        if (storedExperienceFilter) setExperienceFilter(JSON.parse(storedExperienceFilter));
+        if (storedContactFilter) setContactFilter(storedContactFilter);
+        if (storedCityFilter) setCityFilter(storedCityFilter);
+        if (storedKeyFilter) setKeyFilter(storedKeyFilter);
+
+        const storedCandidateId = localStorage.getItem('selectedCandidateId');
+        if (storedCandidateId) {
+            setSelectedCandidateId(storedCandidateId);
+        }
+    }, []);
+
+    // Save filters to local storage
+    useEffect(() => {
+        localStorage.setItem('jobIdFilter', jobIdFilter);
+    }, [jobIdFilter]);
+
+    useEffect(() => {
+        localStorage.setItem('experienceFilter', JSON.stringify(experienceFilter));
+    }, [experienceFilter]);
+
+    useEffect(() => {
+        localStorage.setItem('contactFilter', contactFilter);
+    }, [contactFilter]);
+
+    useEffect(() => {
+        localStorage.setItem('cityFilter', cityFilter);
+    }, [cityFilter]);
+
+    useEffect(() => {
+        localStorage.setItem('keyFilter', keyFilter);
+    }, [keyFilter]);
+
+    useEffect(() => {
+        if (selectedCandidateId) {
+            localStorage.setItem('selectedCandidateId', selectedCandidateId);
+        }
+    }, [selectedCandidateId]);
+
+
    
     
 
