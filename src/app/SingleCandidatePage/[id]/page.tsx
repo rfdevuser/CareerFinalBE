@@ -9,7 +9,21 @@ import InterviewTable from '@/component/assest/InterviewerTable';
 import CandidateTable from '@/component/assest/CandidatePersonalTable';
 import HrStatusTable from '@/component/assest/HrStatusTable';
 import { ADD_CANDIDATE_INTERNAL_INFO } from '@/utils/gql/GQL_MUTATION';
-
+import { sendEmail } from '@/email/email';
+interface Candidate {
+  id: string;
+  job_id: string;
+  name: string;
+  email: string;
+  contact: string;
+  city: string;
+  qualification: string;
+  gender: string;
+  student: boolean;
+  working_professional: boolean;
+  passing_year: number;
+  year_of_experience: number;
+}
 const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
 
@@ -34,7 +48,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
   const [updateaddCandidateInternalInfo] = useMutation(ADD_CANDIDATE_INTERNAL_INFO, {
     onCompleted: () => {
       setMutationLoading(false);
-      refetch(); 
+      refetch();
     },
     onError: (err) => {
       console.error("Error:", err);
@@ -57,12 +71,12 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
   const viewResume = (contact: string) => {
     const resumeRef = ref(storage, `images/${contact}`);
     getDownloadURL(resumeRef)
-        .then((url) => {
-            window.open(url, "_blank");
-        })
-        .catch((error) => {
-            console.error("Error fetching resume: ", error);
-        });
+      .then((url) => {
+        window.open(url, "_blank");
+      })
+      .catch((error) => {
+        console.error("Error fetching resume: ", error);
+      });
   };
 
   const handleAccordionClick = (status: string) => {
@@ -75,7 +89,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
     updateaddCandidateInternalInfo({
       variables: {
         candidateID: id,
-        candidateName:candidateData.candidateById.name,
+        candidateName: candidateData.candidateById.name,
         candidateStatus: activeAccordion,
         noticePeriod: noticePeriod,
         availableToJoin: availableToJoin,
@@ -85,7 +99,47 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
       },
     });
   };
-
+  const handleReject = async (candidate: Candidate) => {
+    const confirmed = window.confirm(`Are you sure you want to send a rejection email to ${candidate.name}?`);
+    if (!confirmed) return;
+  
+    try {
+      // Send rejection email
+      const emailData = {
+        to_email: candidate.email,
+        to_name: candidate.name,
+        to_jobid: candidate.job_id,
+        from_name: 'RAKHIS FASHIONS',
+        reply_to: 'no-reply@rakhisfashions.com',
+        subject: 'Application Status Update',
+        message: 'We wish you the best of luck in your job search and future career endeavors.',
+      };
+  
+      await sendEmail(emailData);
+  
+      // Update candidate status to 'Unselected'
+      await updateaddCandidateInternalInfo({
+        variables: {
+          candidateID: id,
+          candidateName: candidateData.candidateById.name,
+          candidateStatus: 'Unselected', // Set status to 'Unselected'
+          noticePeriod,
+          availableToJoin,
+          presentCom,
+          expectedCom,
+          proposedCom,
+        },
+      });
+  
+      // Refetch data to update the UI
+      await refetch();
+    } catch (error) {
+      console.error('Error handling rejection:', error);
+    } finally {
+      setMutationLoading(false); // Reset loading state
+    }
+  };
+  
   if (candidateLoading || internalInfoLoading) {
     return (
       <div className='flex justify-center'>
@@ -128,18 +182,17 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
                 <div key={status} className="border-t border-gray-200">
                   <button
                     onClick={() => handleAccordionClick(status)}
-                    className={`w-full text-left py-2 px-4 focus:outline-none font-medium transition ease-in-out duration-150 ${
-                      activeAccordion === status
+                    className={`w-full text-left py-2 px-4 focus:outline-none font-medium transition ease-in-out duration-150 ${activeAccordion === status
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {status}
                   </button>
+                 
                   <div
-                    className={`px-4 py-2 ${
-                      activeAccordion === status ? 'block' : 'hidden'
-                    }`}
+                    className={`px-4 py-2 ${activeAccordion === status ? 'block' : 'hidden'
+                      }`}
                   >
                     <p>Candidate Status is : {status}.</p>
                   </div>
@@ -211,6 +264,12 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
             />
           </div>
         </div>
+        <button
+                    onClick={() => handleReject(candidate)}
+                    className="text-red-600 hover:text-red-900 mx-8 bg-yellow-200 p-2 rounded-md"
+                  >
+                    Reject
+                  </button>
       </div>
 
       {/* Display candidate internal information */}
@@ -260,6 +319,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
         >
           {mutationLoading ? 'Posting...' : 'Post'}
         </button>
+   
       </div>
 
       <HrStatusTable candidateID={params.id} />

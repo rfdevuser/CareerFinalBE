@@ -45,7 +45,8 @@ const StudentDataTable: React.FC = () => {
     const [contactFilter, setContactFilter] = useState<string>('');
     const [cityFilter, setCityFilter] = useState<string>('');
     const [keyFilter, setKeyFilter] = useState<string>(''); // Added key filter state
-    
+    const [nameFilter, setNameFilter] = useState<string>('');
+
     const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
     const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
     const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
@@ -215,7 +216,12 @@ const StudentDataTable: React.FC = () => {
             candidate.id.includes(keyFilter) || candidate.job_id.includes(keyFilter)
         );
     }
-   
+    if (nameFilter) {
+        filteredCandidates = filteredCandidates.filter(candidate =>
+            candidate.name.toLowerCase().includes(nameFilter.toLowerCase())
+        );
+    }
+    
     filteredCandidates = [...filteredCandidates].reverse();
 
   
@@ -255,6 +261,17 @@ const StudentDataTable: React.FC = () => {
                 className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
             />
         </div>
+        <div>
+    <label htmlFor="nameFilter" className="block text-sm font-medium text-gray-700">Filter by Name:</label>
+    <input
+        type="text"
+        id="nameFilter"
+        value={nameFilter}
+        onChange={(e) => setNameFilter(e.target.value)}
+        className='border-2 border-gray-300 rounded-md px-3 py-2 w-48'
+    />
+</div>
+
         <div>
             <label htmlFor="contactFilter" className="block text-sm font-medium text-gray-700">Search by Contact Number:</label>
             <input
