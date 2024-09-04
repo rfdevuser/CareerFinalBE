@@ -8,7 +8,7 @@ import { BallTriangle } from 'react-loader-spinner';
 import InterviewTable from '@/component/assest/InterviewerTable';
 import CandidateTable from '@/component/assest/CandidatePersonalTable';
 import HrStatusTable from '@/component/assest/HrStatusTable';
-import { ADD_CANDIDATE_INTERNAL_INFO } from '@/utils/gql/GQL_MUTATION';
+import { ADD_CANDIDATE_INTERNAL_INFO, UPDATE_CANDIDATE_STATUS } from '@/utils/gql/GQL_MUTATION';
 import { sendEmail } from '@/email/email';
 interface Candidate {
   id: string;
@@ -54,6 +54,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
       console.error("Error:", err);
     },
   });
+  const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
 
   // Update form state when internalInfoData changes
   useEffect(() => {
@@ -97,7 +98,15 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
         expectedCom: expectedCom,
         proposedCom: proposedCom,
       },
+      
     });
+     updateCandidateStatus({
+      variables: {
+        id: candidate.id,
+        status: activeAccordion, // Set status to 'Unselected'
+      },
+    });
+   
   };
   const handleReject = async (candidate: Candidate) => {
     const confirmed = window.confirm(`Are you sure you want to send a rejection email to ${candidate.name}?`);
@@ -130,7 +139,13 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
           proposedCom,
         },
       });
-  
+   
+    await updateCandidateStatus({
+      variables: {
+        id: candidate.id,
+        status: 'hold', // Set status to 'Unselected'
+      },
+    });
       // Refetch data to update the UI
       await refetch();
     } catch (error) {

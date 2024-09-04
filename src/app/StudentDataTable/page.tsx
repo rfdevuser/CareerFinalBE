@@ -30,7 +30,8 @@ interface Candidate {
     answer5: string;
     resume: string;
     submission_date: string;
-    status: 'selected' | 'unselected' | 'hold'; // Added 'hold' status
+    status: 'selected' | 'unselected' | 'hold' | 'Ongoing Process' | 'Onboarded';
+    // Added 'hold' status
 }
 
 const StudentDataTable: React.FC = () => {
@@ -169,7 +170,7 @@ const StudentDataTable: React.FC = () => {
           
         };
 
-    const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'unselected' | 'hold') => {
+    const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'unselected' | 'hold' | 'Ongoing Process' | 'Onboarded') => {
         setLoadingCandidateId(candidateId); // Set loading state to true
 
         try {
@@ -387,16 +388,31 @@ const StudentDataTable: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.job_id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <select
-                                            onChange={(e) => handleStatusChange(candidate.id, e.target.value as 'selected' | 'unselected' | 'hold')}
-                                            value={loadingCandidateId === candidate.id ? 'loading' : candidate.status}
-                                            disabled={loadingCandidateId === candidate.id}
-                                            className={`px-2 py-1 rounded text-white ${loadingCandidateId === candidate.id ? 'bg-gray-400' : candidate.status === 'selected' ? 'bg-green-500' : candidate.status === 'hold' ? 'bg-yellow-500' : 'bg-gray-500'}`}
-                                        >
-                                            <option value="selected">Selected</option>
-                                            <option value="unselected">Unselected</option>
-                                            <option value="hold">Hold</option> {/* Added "Hold" option */}
-                                        </select>
+                                    <select
+  onChange={(e) => handleStatusChange(candidate.id, e.target.value as 'selected' | 'unselected' | 'hold' | 'Ongoing Process' | 'Onboarded')}
+  value={loadingCandidateId === candidate.id ? 'loading' : candidate.status}
+  disabled={loadingCandidateId === candidate.id}
+  className={`px-2 py-1 rounded text-white ${
+    loadingCandidateId === candidate.id
+      ? 'bg-gray-400'
+      : candidate.status === 'selected'
+      ? 'bg-green-500'
+      : candidate.status === 'hold'
+      ? 'bg-yellow-500'
+      : candidate.status === 'Ongoing Process'
+      ? 'bg-blue-500' // Choose a suitable color for "Ongoing Process"
+      : candidate.status === 'Onboarded'
+      ? 'bg-teal-500' // Choose a suitable color for "Onboarded"
+      : 'bg-gray-500'
+  }`}
+>
+  <option value="selected">Selected</option>
+  <option value="unselected">Unselected</option>
+  <option value="hold">Hold</option>
+  <option value="Ongoing Process">Ongoing Process</option>
+  <option value="Onboarded">Onboarded</option>
+</select>
+
                                         {loadingCandidateId === candidate.id && (
                                             <BallTriangle
                                                 height={20}
