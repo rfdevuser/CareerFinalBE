@@ -49,6 +49,7 @@ const StudentDataTable: React.FC = () => {
     const [nameFilter, setNameFilter] = useState<string>('');
 
     const { loading, error, data, refetch } = useQuery(CANDIDATE_INFO);
+    console.log(data)
     const [deleteCandidate] = useMutation(DELETE_CANDIDATE_RESPONSE);
     const [updateCandidateStatus] = useMutation(UPDATE_CANDIDATE_STATUS);
     const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -170,7 +171,7 @@ const StudentDataTable: React.FC = () => {
           
         };
 
-    const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'unselected' | 'hold' | 'Ongoing Process' | 'Onboarded') => {
+    const handleStatusChange = async (candidateId: string, newStatus: 'selected' | 'Unselected' | 'hold' | 'Ongoing Process' | 'Onboarded') => {
         setLoadingCandidateId(candidateId); // Set loading state to true
 
         try {
@@ -389,7 +390,7 @@ const StudentDataTable: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{candidate.job_id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <select
-  onChange={(e) => handleStatusChange(candidate.id, e.target.value as 'selected' | 'unselected' | 'hold' | 'Ongoing Process' | 'Onboarded')}
+  onChange={(e) => handleStatusChange(candidate.id, e.target.value as 'selected' | 'Unselected' | 'hold' | 'Ongoing Process' | 'Onboarded')}
   value={loadingCandidateId === candidate.id ? 'loading' : candidate.status}
   disabled={loadingCandidateId === candidate.id}
   className={`px-2 py-1 rounded text-white ${
@@ -397,17 +398,19 @@ const StudentDataTable: React.FC = () => {
       ? 'bg-gray-400'
       : candidate.status === 'selected'
       ? 'bg-green-500'
+      
       : candidate.status === 'hold'
       ? 'bg-yellow-500'
       : candidate.status === 'Ongoing Process'
       ? 'bg-blue-500' // Choose a suitable color for "Ongoing Process"
       : candidate.status === 'Onboarded'
-      ? 'bg-teal-500' // Choose a suitable color for "Onboarded"
+      ? 'bg-teal-500' 
+     // Choose a suitable color for "Onboarded"
       : 'bg-gray-500'
   }`}
 >
   <option value="selected">Selected</option>
-  <option value="unselected">Unselected</option>
+  <option value="Unselected">Unselected</option>
   <option value="hold">Hold</option>
   <option value="Ongoing Process">Ongoing Process</option>
   <option value="Onboarded">Onboarded</option>

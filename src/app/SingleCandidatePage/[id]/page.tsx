@@ -143,7 +143,7 @@ const SingleCandidatePage = ({ params }: { params: { id: string } }) => {
     await updateCandidateStatus({
       variables: {
         id: candidate.id,
-        status: 'hold', // Set status to 'Unselected'
+        status: 'hold', // Set status to 'hold'
       },
     });
       // Refetch data to update the UI
