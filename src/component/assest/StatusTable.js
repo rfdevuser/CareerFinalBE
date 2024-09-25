@@ -26,7 +26,7 @@ const CandidateTable = () => {
     variables: { status },
     skip: !status, // Skip query if no status is selected
   });
-
+console.log(data)
   // Handle status change
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
