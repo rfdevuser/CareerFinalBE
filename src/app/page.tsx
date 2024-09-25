@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Hero from '@/component/Hero';
 
 const SECRET_CODE = 'wetailor4u_2024'; // Replace with your hardcoded secret code
@@ -8,10 +8,17 @@ export default function Home() {
   const [code, setCode] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
 
+  useEffect(() => {
+    // Check if user is authenticated in session storage
+    const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+    setAuthenticated(isAuthenticated);
+  }, []);
+
   const handleSubmit = (e:any) => {
     e.preventDefault();
     if (code === SECRET_CODE) {
       setAuthenticated(true); // Mark as authenticated
+      sessionStorage.setItem('authenticated', 'true'); // Save to session storage
     } else {
       alert('Invalid secret code');
     }
