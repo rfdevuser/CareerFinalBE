@@ -132,3 +132,13 @@ export const GET_CANDIDATE_MULTIPLE_DETAILS = gql`
     }
   }
 `;
+
+
+export const GET_EMPLOYEE_MULTIPLE_DETAILS = gql`
+  query GetEmployeeDetails($contact: String!) {
+    employeeIDByContact(contact: $contact) {
+      employeeID
+     
+    }
+  }
+`;

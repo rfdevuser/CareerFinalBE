@@ -44,6 +44,11 @@ console.log(data)
             See Candidates Response here
           </div>
         </Link>
+        <Link href='./GenerateEmployeeID'>
+          <div className='border-2 border-gray-300 bg-[#831843] text-white rounded-lg p-4 h-48 w-48 flex items-center justify-center'>
+            Generate Employee ID 
+          </div>
+        </Link>
       </div>
 
      

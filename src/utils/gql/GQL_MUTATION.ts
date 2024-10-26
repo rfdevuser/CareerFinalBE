@@ -172,3 +172,31 @@ export const ADD_INTERVIEWER_CANDIDATE_INFO = gql`
     }
   }
 `;
+
+
+
+
+
+export const INSERT_EMPLOYEE = gql`
+  mutation InsertEmployee(
+    $dept: String!,
+    $contact: String!,
+    $email: String!,
+    $name: String!,
+    $password: String!
+  ) {
+    employeeIDGeneratorInsertEmployee( input:{
+    clientMutationId: "test"
+     
+      contact: $contact,
+       dept: $dept,
+      email: $email,
+      name: $name,
+      password: $password
+}){
+        clientMutationId
+    employeeID
+    password
+    }
+  }
+`;
