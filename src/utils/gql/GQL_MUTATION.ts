@@ -200,3 +200,19 @@ export const INSERT_EMPLOYEE = gql`
     }
   }
 `;
+
+
+export const ADD_EMPLOYEE_VERIFICATION = gql`
+  mutation AddEmployeeVerification(
+    $employeeID: String!,
+    $verificationStatus: String!
+  ) {
+    employeeVerificationInsert(input: {
+      employeeID: $employeeID,
+      verificationStatus: $verificationStatus
+    }) {
+      clientMutationId
+      responseMessage
+    }
+  }
+`;

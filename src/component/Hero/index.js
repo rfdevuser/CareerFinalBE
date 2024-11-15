@@ -49,6 +49,11 @@ console.log(data)
             Generate Employee ID 
           </div>
         </Link>
+        <Link href='./EmployeeDocument'>
+          <div className='border-2 border-gray-300 bg-[#831843] text-white rounded-lg p-4 h-48 w-48 flex items-center justify-center'>
+             Employee Document
+          </div>
+        </Link>
       </div>
 
      
