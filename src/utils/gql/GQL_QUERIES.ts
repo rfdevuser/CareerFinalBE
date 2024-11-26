@@ -301,3 +301,43 @@ export const GET_EMPLOYEE_VERIFICATION = gql`
     }
   }
 `;
+
+
+export const GET_EMPLOYEE_WORK_DETAILS = gql`
+  query GetEmployeeWorkDetails($employeeID: String!) {
+    employeeDashboardWorks(employeeID: $employeeID) {
+      dateOfSubmission
+      employeeID
+      employeeName
+      status
+      timeline
+      workTicket
+    }
+  }
+`;
+
+export const GET_ALL_EMPLOYEE_WORK_DETAILS = gql`
+  query GetAllEmployeeWorkDetails {
+    allEmployeeDashboardWorks {
+      id
+      employeeID
+      employeeName
+      timeline
+      status
+      dateOfSubmission
+      
+    }
+  }
+`;
+
+export const GET_INDIVIDUAL_EMPLOYEE_DAILYACTIVITY = gql`
+query GetIndividualEmployeeDailyWorkDetails($employeeID:String) {
+  employeeDailyActivities(employeeID: $employeeID) {
+    date_of_submission
+    empID
+    id
+    workDetails
+  }
+}
+
+`

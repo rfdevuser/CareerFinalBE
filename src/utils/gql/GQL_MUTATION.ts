@@ -216,3 +216,25 @@ export const ADD_EMPLOYEE_VERIFICATION = gql`
     }
   }
 `;
+
+
+export const UPDATE_EMPLOYEE_WORK_DETAILS = gql`
+  mutation UpdateEmployeeWorkDetails(
+    $employeeID: String!,
+    $employeeName: String!,
+    $timeline: String!,
+    $status: String!,
+    $workTicket: String!
+  ) {
+    employeeUpdateWorkDetails(input: {
+      employeeID: $employeeID,
+      employeeName: $employeeName,
+      timeline: $timeline,
+      status: $status,
+      workTicket: $workTicket
+    }) {
+      clientMutationId
+      responseMessage
+    }
+  }
+`;

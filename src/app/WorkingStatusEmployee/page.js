@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { GET_EMPLOYEES } from "@/utils/gql/GQL_QUERIES";
 import Link from "next/link";
 
-const EmployeeTable = () => {
+const WorkingStatus = () => {
   // State for filter inputs
   const [filters, setFilters] = useState({
     employeeID: "",
@@ -41,7 +41,7 @@ const EmployeeTable = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Employee List and Information </h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Check the Working Status of Employee</h2>
 
       {/* Filters Section */}
       <div className="mb-6 space-x-4">
@@ -89,7 +89,7 @@ const EmployeeTable = () => {
               <th className="px-6 py-3 text-left">Email</th>
               <th className="px-6 py-3 text-left">Department</th>
               <th className="px-6 py-3 text-left">Contact</th>
-              <th className="px-6 py-3 text-left">Password</th>
+     
             </tr>
           </thead>
           <tbody>
@@ -99,13 +99,13 @@ const EmployeeTable = () => {
                   key={employee.employeeID}
                   className="border-t hover:bg-gray-100 transition-colors"
                 >
-                   <Link href={`/EmployeeDetails?id=${employee.employeeID}`} as={`/EmployeeDetails/${employee.employeeID}`}>
+                   <Link href={`/WorkingStatusEmployee(V2)?id=${employee.employeeID}`} as={`/WorkingStatusEmployee(V2)/${employee.employeeID}`}>
                   <td className="px-6 py-3 text-blue-600 hover:text-blue-900"><u><b>{employee.employeeID}</b></u></td></Link>
                   <td className="px-6 py-3">{employee.name}</td>
                   <td className="px-6 py-3">{employee.email}</td>
                   <td className="px-6 py-3">{employee.dept}</td>
                   <td className="px-6 py-3">{employee.contact}</td>
-                  <td className="px-6 py-3">{employee.password}</td>
+               
                 </tr>
               ))
             ) : (
@@ -122,4 +122,4 @@ const EmployeeTable = () => {
   );
 };
 
-export default EmployeeTable;
+export default WorkingStatus;
