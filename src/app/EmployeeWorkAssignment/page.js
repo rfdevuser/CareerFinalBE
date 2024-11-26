@@ -1,34 +1,60 @@
-"use client";
+"use client"
 import { UPDATE_EMPLOYEE_WORK_DETAILS } from '@/utils/gql/GQL_MUTATION';
 import { useMutation } from '@apollo/client';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import emailjs from 'emailjs-com';
+
+const USER_ID = 'user_QBs08JbvqdXivIagZeWFH'; // Consider using environment variables for security
+const SERVICE_ID = 'service_7r8sia9'; // Consider using environment variables for security
+const TEMPLATE_ID = 'template_3ib2sig';
+
+// Modified employeeMapping to include emails
+const employeeMapping = {
+  "Abhishek Suman": { code: "IT_001", email: "suman.abhishek@rakhisfashions.com" },
+  "Balasubramanian B": { code: "HR_001", email: "balahr@rakhisfashions.com" },
+  "Shimna Nithesh": { code: "ACC_001", email: "accounts@rakhisfashions.com" },
+  "KS Sushma": { code: "FD_004", email: "sushma@rakhisfashions.com" },
+  "BhanuPriya Boral": { code: "FD_002", email: "bhanupriya@rakhisfashions.com" },
+  "Prajwala C": { code: "FD_005", email: "prajwala@rakhisfashions.com" },
+  "Laxmi Pandey": { code: "FD_001", email: "laxmi@rakhisfashions.com" },
+  "Kruthika A": { code: "FD_003", email: "kruthika@rakhisfashions.com" },
+  "Chandrashekar B": { code: "ADF_001", email: "chandrashekar@example.com" },
+  "Jayamala V": { code: "PROD_001", email: "jayamala@example.com" },
+  "Mohammad Tarik": { code: "PROD_002", email: "tarik@example.com" },
+  "Ambika JC": { code: "PROD_003", email: "ambika@example.com" },
+  "Sagir Ansri": { code: "PROD_004", email: "sagir@example.com" },
+  "Sampa Das": { code: "PROD_005", email: "sampa@example.com" },
+  "Ambrish V": { code: "PROD_006", email: "ambrish@example.com" },
+  "Sunil Kumar G K": { code: "ADF_002", email: "sunil@example.com" },
+  "Prantosh Namasudra": { code: "ADF_003", email: "prantosh@example.com" },
+  "Valipi Yogananda": { code: "PROD_007", email: "yogananda@rakhisfashions.com" }
+};
+
+export async function sendEmailTicket(formData) {
+  try {
+    const templateParams = {
+      to_email: formData.to_email,
+      to_name: formData.to_name,
+      to_jobid: formData.to_jobid,
+      from_name: formData.from_name,
+      reply_to: formData.reply_to,
+      subject: formData.subject,
+      message: formData.message,
+    };
+
+    await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID);
+    console.log('Email sent successfully!');
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
 
 const EmployeeTaskAssignment = () => {
-  const employeeMapping = {
-    "Abhishek Suman": "IT_001",
-    "Balasubramanian B": "HR_001",
-    "Shimna Nithesh": "ACC_001",
-    "KS Sushma": "FD_004",
-    "BhanuPriya Boral": "FD_002",
-    "Prajwala C": "FD_005",
-    "Laxmi Pandey": "FD_001",
-    "Kruthika A": "FD_003",
-    "Chandrashekar B": "ADF_001",
-    "Jayamala V": "PROD_001",
-    "Mohammad Tarik": "PROD_002",
-    "Ambika JC": "PROD_003",
-    "Sagir Ansri": "PROD_004",
-    "Sampa Das": "PROD_005",
-    "Ambrish V": "PROD_006",
-    "Sunil Kumar G K": "ADF_002",
-    "Prantosh Namasudra": "ADF_003",
-    "Valipi Yogananda": "PROD_007"
-  };
-
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [employeeTask, setEmployeeTask] = useState("");
   const [taskCompletionDate, setTaskCompletionDate] = useState("");
+  const [isAssigning, setIsAssigning] = useState(false); // New state to track the assigning process
   const [insertWork, { loading, error }] = useMutation(UPDATE_EMPLOYEE_WORK_DETAILS);
 
   const handleEmployeeChange = (event) => {
@@ -52,10 +78,35 @@ const EmployeeTaskAssignment = () => {
       return;
     }
 
+    // Retrieve employee details from employeeMapping
+    const employee = employeeMapping[selectedEmployee];
+    if (!employee) {
+      alert("Employee not found.");
+      return;
+    }
+
     try {
+      // Set isAssigning to true when starting the process
+      setIsAssigning(true);
+
+      // Prepare email data
+      const emailData = {
+        to_email: employee.email,
+        to_name: selectedEmployee,
+        to_jobid: employee.code,
+        from_name: 'RAKHIS FASHIONS',
+        reply_to: 'no-reply@rakhisfashions.com',
+        subject: 'Task Assignment Notification',
+        message: `Dear ${selectedEmployee},\n\nYou have been assigned a new task.\nThe task is expected to be completed by ${taskCompletionDate}. Please acknowledge the assignment check the Employee Dashboard and proceed accordingly.\n\nBest regards,\nRAKHIS FASHIONS`,
+      };
+
+      // Send email notification
+      await sendEmailTicket(emailData);
+
+      // Send mutation to update work details
       const response = await insertWork({
         variables: {
-          employeeID: employeeMapping[selectedEmployee],
+          employeeID: employee.code,
           employeeName: selectedEmployee,
           timeline: taskCompletionDate,
           status: "1",  // Assuming status is always '1'
@@ -67,10 +118,15 @@ const EmployeeTaskAssignment = () => {
         setEmployeeTask('');
         setTaskCompletionDate('');
         setSelectedEmployee('');
-        alert("Work details updated successfully!");
+        alert("Work details updated and email sent successfully!");
       }
+
     } catch (err) {
-      alert("Error updating work details: " + err.message);
+      console.error("Error during task assignment:", err);
+      alert("Error updating work details or sending email: " + err.message);
+    } finally {
+      // Set isAssigning to false when the task is completed (successful or failed)
+      setIsAssigning(false);
     }
   };
 
@@ -84,9 +140,9 @@ const EmployeeTaskAssignment = () => {
 
       <div className="mt-2 mx-4">
         <Link href='/WorkingStatusEmployee'>
-        <button className="bg-yellow-200 p-4 text-xl rounded-md hover:bg-yellow-400 w-full lg:w-1/4">
-          ☰ Check Working status of team
-        </button>
+          <button className="bg-yellow-200 p-4 text-xl rounded-md hover:bg-yellow-400 w-full lg:w-1/4">
+            ☰ Check Working status of team
+          </button>
         </Link>
       </div>
 
@@ -111,7 +167,7 @@ const EmployeeTaskAssignment = () => {
 
           {selectedEmployee && (
             <div className="text-lg font-semibold text-gray-700 mt-4">
-              <p>Employee Code: <span className="font-normal">{employeeMapping[selectedEmployee]}</span></p>
+              <p>Employee Code: <span className="font-normal">{employeeMapping[selectedEmployee].code}</span></p>
             </div>
           )}
 
@@ -142,9 +198,9 @@ const EmployeeTaskAssignment = () => {
         <button
           className='bg-red-600 px-4 py-2 rounded-md text-white hover:bg-red-800'
           onClick={handleOnClick}
-          disabled={loading}
+          disabled={isAssigning || loading} // Disable button when assigning
         >
-          {loading ? "Assigning..." : "Assign"}
+          {isAssigning || loading ? "Assigning..." : "Assign"}
         </button>
       </div>
       {error && <p className="text-red-600 text-center">{error.message}</p>}
