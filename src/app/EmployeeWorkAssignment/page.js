@@ -4,12 +4,9 @@ import { useMutation } from '@apollo/client';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
+import { sendEmail } from '@/email/email';
 
-const USER_ID = 'user_QBs08JbvqdXivIagZeWFH'; // Consider using environment variables for security
-const SERVICE_ID = 'service_7r8sia9'; // Consider using environment variables for security
-const TEMPLATE_ID = 'template_3ib2sig';
 
-// Modified employeeMapping to include emails
 const employeeMapping = {
   "Abhishek Suman": { code: "IT_001", email: "suman.abhishek@rakhisfashions.com" },
   "Balasubramanian B": { code: "HR_001", email: "balahr@rakhisfashions.com" },
@@ -31,24 +28,8 @@ const employeeMapping = {
   "Valipi Yogananda": { code: "PROD_007", email: "yogananda@rakhisfashions.com" }
 };
 
-export async function sendEmailTicket(formData) {
-  try {
-    const templateParams = {
-      to_email: formData.to_email,
-      to_name: formData.to_name,
-      to_jobid: formData.to_jobid,
-      from_name: formData.from_name,
-      reply_to: formData.reply_to,
-      subject: formData.subject,
-      message: formData.message,
-    };
 
-    await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, USER_ID);
-    console.log('Email sent successfully!');
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
-}
+
 
 const EmployeeTaskAssignment = () => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
@@ -96,12 +77,12 @@ const EmployeeTaskAssignment = () => {
         to_jobid: employee.code,
         from_name: 'RAKHIS FASHIONS',
         reply_to: 'no-reply@rakhisfashions.com',
-        subject: 'Task Assignment Notification',
+        subject: 'Task Ticket Assignment Notification',
         message: `Dear ${selectedEmployee},\n\nYou have been assigned a new task.\nThe task is expected to be completed by ${taskCompletionDate}. Please acknowledge the assignment check the Employee Dashboard and proceed accordingly.\n\nBest regards,\nRAKHIS FASHIONS`,
       };
 
       // Send email notification
-      await sendEmailTicket(emailData);
+      await sendEmail(emailData);
 
       // Send mutation to update work details
       const response = await insertWork({

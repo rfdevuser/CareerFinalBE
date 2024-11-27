@@ -144,11 +144,11 @@ const StudentDataTable: React.FC = () => {
         const emailData = {
             to_email: candidate.email,
             to_name: candidate.name,
-            to_jobid:candidate.job_id,
+            to_jobid: candidate.job_id,
             from_name: 'RAKHIS FASHIONS',
             reply_to: 'no-reply@rakhisfashions.com',
-            subject: 'Application Status Update',
-            message: 'We wish you the best of luck in your job search and future career endeavors.',
+            subject: ` ${candidate.name}, Thank You for your application`,
+            message: `Dear ${candidate.name},\n\nThank you for taking the time to apply for the ${candidate.job_id} position at Rakhis Fashions. We appreciate the effort you put into your application and your interest in joining our team.\n\nAfter careful consideration, we have decided to move forward with another candidate who more closely matches the specific needs of this role. This decision was not easy, as we were impressed with your qualifications and experience.\n\nWe encourage you to apply for future openings at Rakhis Fashions that align with your skills and interests. We will keep your resume on file for any suitable opportunities that may arise.\n\nWe wish you the best of luck in your job search and future career endeavors.\n\nBest wishes,\nRakhis Fashions Recruiting`
         };
     
        
