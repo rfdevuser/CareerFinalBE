@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_EMPLOYEES } from "@/utils/gql/GQL_QUERIES";
 import Link from "next/link";
-
+import PerformanceGraph from '@/component/assest/PerformanceGraph'
 const WorkingStatus = () => {
   // State for filter inputs
   const [filters, setFilters] = useState({
@@ -40,6 +40,8 @@ const WorkingStatus = () => {
   });
 
   return (
+    <>
+    <PerformanceGraph/>
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">Check the Working Status of Employee</h2>
 
@@ -119,6 +121,7 @@ const WorkingStatus = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 

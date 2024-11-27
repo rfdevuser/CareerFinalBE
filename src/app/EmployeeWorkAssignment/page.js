@@ -1,11 +1,9 @@
-"use client"
+"use client";
 import { UPDATE_EMPLOYEE_WORK_DETAILS } from '@/utils/gql/GQL_MUTATION';
 import { useMutation } from '@apollo/client';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import emailjs from 'emailjs-com';
 import { sendEmail } from '@/email/email';
-
 
 const employeeMapping = {
   "Abhishek Suman": { code: "IT_001", email: "suman.abhishek@rakhisfashions.com" },
@@ -28,18 +26,20 @@ const employeeMapping = {
   "Valipi Yogananda": { code: "PROD_007", email: "yogananda@rakhisfashions.com" }
 };
 
-
-
-
 const EmployeeTaskAssignment = () => {
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [employeeTask, setEmployeeTask] = useState("");
   const [taskCompletionDate, setTaskCompletionDate] = useState("");
-  const [isAssigning, setIsAssigning] = useState(false); // New state to track the assigning process
+  const [managerName, setManagerName] = useState("");
+  const [managerEmail, setManagerEmail] = useState("");
+  const [isAssigning, setIsAssigning] = useState(false);
   const [insertWork, { loading, error }] = useMutation(UPDATE_EMPLOYEE_WORK_DETAILS);
 
   const handleEmployeeChange = (event) => {
-    setSelectedEmployee(event.target.value);
+    const { value, checked } = event.target;
+    setSelectedEmployees((prevSelected) =>
+      checked ? [...prevSelected, value] : prevSelected.filter((employee) => employee !== value)
+    );
   };
 
   const handleEmployeeTaskChange = (event) => {
@@ -50,63 +50,69 @@ const EmployeeTaskAssignment = () => {
     setTaskCompletionDate(event.target.value);
   };
 
+  const handleManagerNameChange = (event) => {
+    setManagerName(event.target.value);
+  };
+
+  const handleManagerEmailChange = (event) => {
+    setManagerEmail(event.target.value);
+  };
+
   const handleOnClick = async (e) => {
     e.preventDefault();
 
     // Check if all required fields are filled
-    if (!selectedEmployee || !employeeTask || !taskCompletionDate) {
+    if (selectedEmployees.length === 0 || !employeeTask || !taskCompletionDate) {
       alert("Please fill out all required fields.");
       return;
     }
 
-    // Retrieve employee details from employeeMapping
-    const employee = employeeMapping[selectedEmployee];
-    if (!employee) {
-      alert("Employee not found.");
-      return;
-    }
-
     try {
-      // Set isAssigning to true when starting the process
       setIsAssigning(true);
 
-      // Prepare email data
-      const emailData = {
-        to_email: employee.email,
-        to_name: selectedEmployee,
-        to_jobid: employee.code,
-        from_name: 'RAKHIS FASHIONS',
-        reply_to: 'no-reply@rakhisfashions.com',
-        subject: 'Task Ticket Assignment Notification',
-        message: `Dear ${selectedEmployee},\n\nYou have been assigned a new task.\nThe task is expected to be completed by ${taskCompletionDate}. Please acknowledge the assignment check the Employee Dashboard and proceed accordingly.\n\nBest regards,\nRAKHIS FASHIONS`,
-      };
+      for (const employeeName of selectedEmployees) {
+        const employee = employeeMapping[employeeName];
+        if (!employee) {
+          alert(`Employee ${employeeName} not found.`);
+          continue;
+        }
 
-      // Send email notification
-      await sendEmail(emailData);
+        // Prepare email data with manager's info if provided
+        const emailData = {
+          to_email: employee.email,
+          to_name: employeeName,
+          to_jobid: employee.code,
+          from_name: 'RAKHIS FASHIONS',
+          reply_to: managerEmail || 'no-reply@rakhisfashions.com',
+          cc: managerEmail, // CC manager's email if provided
+          subject: 'Task Ticket Assignment Notification',
+          message: `Dear ${employeeName},\n\nYou have been assigned a new task-  ${employeeTask}.\nThe task is expected to be completed by ${taskCompletionDate}. Please acknowledge the assignment, check the Employee Dashboard, and proceed accordingly.\n\nBest regards,\n${managerName || 'RAKHIS FASHIONS'}`,
+        };
 
-      // Send mutation to update work details
-      const response = await insertWork({
-        variables: {
-          employeeID: employee.code,
-          employeeName: selectedEmployee,
-          timeline: taskCompletionDate,
-          status: "1",  // Assuming status is always '1'
-          workTicket: employeeTask
-        },
-      });
+        await sendEmail(emailData);
 
-      if (response.data) {
-        setEmployeeTask('');
-        setTaskCompletionDate('');
-        setSelectedEmployee('');
-        alert("Work details updated and email sent successfully!");
+        await insertWork({
+          variables: {
+            employeeID: employee.code,
+            employeeName: employeeName,
+            timeline: taskCompletionDate,
+            status: "1", // Assuming status is always '1'
+            workTicket: employeeTask
+          },
+        });
       }
+
+      alert("Work details updated and emails sent successfully!");
+      setEmployeeTask('');
+      setTaskCompletionDate('');
+      setSelectedEmployees([]);
+      setManagerName('');
+      setManagerEmail('');
 
     } catch (err) {
       console.error("Error during task assignment:", err);
-      alert("Error updating work details or sending email: " + err.message);
+      alert("Error updating work details or sending emails: " + err.message);
     } finally {
-      // Set isAssigning to false when the task is completed (successful or failed)
       setIsAssigning(false);
     }
   };
@@ -130,33 +136,49 @@ const EmployeeTaskAssignment = () => {
       <div className="bg-blue-50 m-4 p-6 rounded-lg shadow-lg">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-full">
-            <label className="block text-gray-800 font-medium mb-2">Select Employee Name</label>
-            <select
-              id="EmployeeName"
-              value={selectedEmployee}
-              onChange={handleEmployeeChange}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">--Select Employee--</option>
+            <label className="block text-gray-800 font-medium mb-2">Select Employee(s)</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.keys(employeeMapping).map((employeeName) => (
-                <option key={employeeName} value={employeeName}>
-                  {employeeName}
-                </option>
+                <div key={employeeName} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={employeeName}
+                    value={employeeName}
+                    onChange={handleEmployeeChange}
+                    className="mr-2"
+                  />
+                  <label htmlFor={employeeName} className="text-gray-800">{employeeName}</label>
+                </div>
               ))}
-            </select>
+            </div>
           </div>
 
-          {selectedEmployee && (
-            <div className="text-lg font-semibold text-gray-700 mt-4">
-              <p>Employee Code: <span className="font-normal">{employeeMapping[selectedEmployee].code}</span></p>
-            </div>
-          )}
+          <div className="w-full">
+            <label className="block text-gray-800 font-medium mb-2">Manager Name</label>
+            <input
+              type="text"
+              value={managerName}
+              onChange={handleManagerNameChange}
+              placeholder="Enter manager's name"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="w-full">
+            <label className="block text-gray-800 font-medium mb-2">Manager Email (Optional)</label>
+            <input
+              type="email"
+              value={managerEmail}
+              onChange={handleManagerEmailChange}
+              placeholder="Enter manager's email"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           <div className="w-full">
             <label className="block text-gray-800 font-medium mb-2">Task to be Assigned</label>
             <input
               type="text"
-              id="EmployeeTask"
               value={employeeTask}
               onChange={handleEmployeeTaskChange}
               className="w-full h-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
@@ -167,7 +189,6 @@ const EmployeeTaskAssignment = () => {
             <label className="block text-gray-800 font-medium mb-2">Date of Completion</label>
             <input
               type="date"
-              id="taskCompletion"
               value={taskCompletionDate}
               onChange={handleTaskCompletionDate}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
